@@ -6,28 +6,25 @@
 
 -- $ docker exec -it mysql-db mysql -p
 
-CREATE DATABASE grupal2_ld_user;
+CREATE DATABASE grupal3;
 
 -- SHOW DATABASES;
 
-USE grupal2_ld_user;
+USE grupal3;
 
 CREATE TABLE credential(
-  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  id_credential INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   user VARCHAR(60) NOT NULL UNIQUE,
   password VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE user(
-  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(30) NOT NULL,
-  lastname VARCHAR(30) NOT NULL,
+  id_user INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(60) NOT NULL,
   email VARCHAR(60) NOT NULL UNIQUE,
-  idNumber VARCHAR(12) NOT NULL UNIQUE,
   id_credential INT NOT NULL,
   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  state INT NOT NULL DEFAULT 1,
-  FOREIGN KEY (id_credential) REFERENCES credential(id)
+  FOREIGN KEY (id_credential) REFERENCES credential(id_credential)
 );
 
 -- SHOW COLUMNS FROM student;

@@ -8,9 +8,9 @@ async function createuser(req, res) {
   };
 
   const user = req.body;
-  const { name, lastname, email, idNumber } = user;
+  const { name, email, password } = user;
 
-  if (!name || !lastname || !email || !idNumber) {
+  if (!name || !email || !password) {
     response.error = 'Missing required parameters';
     return res.status(400).send(response);
   }
@@ -22,13 +22,15 @@ async function createuser(req, res) {
     return res.status(500).send(response);
   }
 
-  // Evitar enviar este error en una api publica si la informacion enviada incluye email o rut
-  if (result === 'User already exists') {
-    response.error = result;
+  if (result === 'ER_DUP_ENTRY') {
+    response.error = 'An account already exists with this email address';
     return res.status(409).send(response);
   }
 
-  response.data = result;
+  // inicializa la sesion agrgando el insertId
+  req.session.id_user = result.insertId;
+
+  response.data = true;
   return res.status(201).send(response);
 }
 
@@ -139,19 +141,19 @@ async function deleteuser(req, res) {
 
 async function loginuser(req, res) {
   const response = {
-    message: 'User login',
+    message: 'Login user',
     data: null,
     error: null,
   };
 
-  const { user, password } = req.body;
+  const { email, password } = req.body;
 
-  if (!user || !password) {
+  if (!email || !password) {
     response.error = 'Missing required parameters';
     return res.status(400).send(response);
   }
 
-  const result = await userModel.loginuser({ user, password });
+  const result = await userModel.loginuser({ email, password });
 
   if (result === null) {
     response.error = 'Error validating user';
@@ -159,11 +161,14 @@ async function loginuser(req, res) {
   }
 
   if (result === false) {
-    response.error = 'The user or password is incorrect';
+    response.error = 'The email or password is incorrect';
     return res.status(401).send(response);
   }
+  // agrega la propeiedad userId -> inicializa la sesion
+  req.session.id_user = result.id_user;
+  console.log(req.session);
 
-  response.data = result;
+  response.data = true;
   res.status(200).send(response);
 }
 

@@ -7,11 +7,6 @@ const pool = mysql.createPool({
   host: DB_HOST,
   port: DB_PORT,
   database: DB_DATABASE,
-  connectionLimit: 20,
-  maxIdle: 10,
-  idleTimeout: 5000,
-  queueLimit: 0,
-  connectTimeout: 2000,
 });
 
 const promisePool = pool.promise();
